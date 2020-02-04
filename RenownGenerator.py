@@ -77,7 +77,6 @@ def setting_config():
         config.set("CUSTOM_PRESET_SETTINGS", "MotionBlur", "0")
         config.set("CUSTOM_PRESET_SETTINGS", "LensEffects", "0")
         config.set("CUSTOM_PRESET_SETTINGS", "DepthOfField", "0")
-        config.set("CUSTOM_PRESET_SETTINGS", "DepthOfField", "0")
         config.set("DISPLAY", "FPSLimit", "30")
         config.set("AUDIO", "Volume", "0")
         print(f"New parameters written.")
