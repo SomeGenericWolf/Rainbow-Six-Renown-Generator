@@ -2,7 +2,7 @@
 This is an image recognition based program, it finds paterns in the screen and performs actions on them, used to generate the in-game currency by playing countless Terrorist Hunt matches by itself.
 
 # Usage:
-- No need to install. It's a portable program. Just download the files and extract.
+- No need to install. It's a portable program. Just download whole project and extract.
 - Some In-Game settings have to be changed before running the program, please see first the "Instructions" folder.
 - Once you have configured the matchmaking preferences, close the game and run the "RenownGenerator.exe".
 - Press "CTRL+C" into the console to end the program. Otherwise, press "Esc" while in a match.
