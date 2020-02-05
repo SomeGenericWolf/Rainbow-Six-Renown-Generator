@@ -1,3 +1,4 @@
+# Made by Mia, uwu
 import os
 import sys
 import time
@@ -7,7 +8,6 @@ import subprocess
 import configparser
 from uuid import UUID
 
-# You shouldn't be here, but ok, hello stranger!
 print("Rainbow Six Siege - Automatic Renown Generator\n")
 time.sleep(1.5)
 user_profile = os.environ['USERPROFILE']
@@ -25,7 +25,6 @@ if game_uuid is None:
 dir_folder = f"{user_profile}\\Documents\\My Games\\Rainbow Six - Siege\\{game_uuid}"
 steam_dir = "\\Program Files (x86)\\Steam\\steamapps\\common\\Tom Clancy's Rainbow Six Siege"
 uplay_dir = "\\Program Files (x86)\\Ubisoft\\Ubisoft Game Launcher\\games\\Tom Clancy's Rainbow Six Siege"
-
 if os.path.exists(f"C:{steam_dir}"):
     r6s_launcher = f"C:{steam_dir}\\RainbowSix.exe"
 elif os.path.exists(f"D:{steam_dir}"):
@@ -85,7 +84,20 @@ def setting_config():
             config.write(configfile)
 
 
-def skipping_intro():
+def search_and_click(image_name, max_tries=200):
+    tries = 0
+    while tries < max_tries:
+        ig_element = pyautogui.locateCenterOnScreen(f"{fd}{image_name}", confidence=0.8)
+        if ig_element is None:
+            tries += 1
+            pass
+        else:
+            pyautogui.mouseDown(ig_element, button='left')
+            pyautogui.mouseUp(ig_element, button='left')
+            return True
+
+
+def starting_game():
     print("\nStarting RainbowSix.exe, please wait.")
     subprocess.Popen(r6s_launcher)
     st_presence = False
@@ -103,22 +115,6 @@ def skipping_intro():
         else:
             time.sleep(1)
             main_menu_presence = True
-
-
-def search_and_click(image_name, max_tries=200):
-    tries = 0
-    while tries < max_tries:
-        ig_element = pyautogui.locateCenterOnScreen(f"{fd}{image_name}", confidence=0.8)
-        if ig_element is None:
-            tries += 1
-            pass
-        else:
-            pyautogui.mouseDown(ig_element, button='left')
-            pyautogui.mouseUp(ig_element, button='left')
-            return True
-
-
-def starting_game():
     print("Starting a Terrorist Hunt match.")
     search_and_click("menu_button.PNG")
     search_and_click("th_button.PNG")
@@ -176,7 +172,6 @@ def restoring_config():
 
 try:
     setting_config()
-    skipping_intro()
     starting_game()
     renown_generator()
     restoring_config()
