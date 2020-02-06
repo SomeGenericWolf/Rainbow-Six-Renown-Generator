@@ -1,5 +1,5 @@
 # About Rainbow Six Renown Generator:
-This is an image recognition based program, it finds paterns in the screen and performs actions on them, used to generate the in-game currency by playing countless Terrorist Hunt matches by itself.
+This is an image recognition based program, it finds patterns in the screen and performs actions on them, used to generate the in-game currency by playing countless Terrorist Hunt matches by itself.
 
 # Usage:
 - No need to install. It's a portable program. Just download whole project and extract.
