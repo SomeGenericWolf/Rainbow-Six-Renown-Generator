@@ -24,6 +24,7 @@ if game_uuid is None:
     exit(f"Error. UUID not found.")
 dir_folder = f"{user_profile}\\Documents\\My Games\\Rainbow Six - Siege\\{game_uuid}"
 steam_dir = "\\Program Files (x86)\\Steam\\steamapps\\common\\Tom Clancy's Rainbow Six Siege"
+steam_dir2 = "\\Steam\\steamapps\\common\\Tom Clancy's Rainbow Six Siege"
 uplay_dir = "\\Program Files (x86)\\Ubisoft\\Ubisoft Game Launcher\\games\\Tom Clancy's Rainbow Six Siege"
 if os.path.exists(f"C:{steam_dir}"):
     r6s_launcher = f"C:{steam_dir}\\RainbowSix.exe"
@@ -33,9 +34,13 @@ elif os.path.exists(f"C:{uplay_dir}"):
     r6s_launcher = f"C:{uplay_dir}\\RainbowSix.exe"
 elif os.path.exists(f"D:{uplay_dir}"):
     r6s_launcher = f"D:{uplay_dir}\\RainbowSix.exe"
+elif os.path.exists(f"C:{steam_dir2}"):
+    r6s_launcher = f"C:{steam_dir2}\\RainbowSix.exe"
+elif os.path.exists(f"D:{steam_dir2}"):
+    r6s_launcher = f"D:{steam_dir2}\\RainbowSix.exe"
 else:
     try:
-        r6s_launcher = open("Files\\R6S_Path.txt").read().strip()
+        r6s_launcher = open(f"{fd}R6S_Path.txt").read().strip()
     except IOError:
         print(f"Enter the path of the folder where \"Rainbow Six\" is installed.")
         r6s_launcher = input(f"\nExample: C:{steam_dir}\nEnter the path: ")
@@ -44,8 +49,11 @@ else:
         if os.path.isfile(f"{r6s_launcher}\\RainbowSix.exe"):
             print("\"RainbowSix.exe\" found.")
             r6s_launcher = f"{r6s_launcher}\\RainbowSix.exe"
-            with open("Alternative stuff\\R6S_Path.txt", 'w') as f:
-                f.write(r6s_launcher)
+            try:
+                with open(f"{fd}R6S_Path.txt", 'w') as f:
+                    f.write(r6s_launcher)
+            except IOError:
+                print("Couldn't create the R6S_Path.txt")
         else:
             print("\"RainbowSix.exe\" not found inside the path you provided. Exiting")
             time.sleep(3.3)
@@ -123,7 +131,8 @@ def starting_game():
 
 
 def renown_generator():
-    print("\nRenown Generator Started. - (To stop, press \"Esc\" while in-game. or CTRL+C)")
+    # print("\nRenown Generator Started. - (To stop, press \"Esc\" while in-game. or CTRL+C)")
+    print("\nRenown Generator Started. - (To stop, press \"Esc\" while in-game.")
     matches = 0
     stop = False
     while stop is False:
