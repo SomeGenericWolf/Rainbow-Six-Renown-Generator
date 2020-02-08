@@ -26,6 +26,7 @@ dir_folder = f"{user_profile}\\Documents\\My Games\\Rainbow Six - Siege\\{game_u
 steam_dir = "\\Program Files (x86)\\Steam\\steamapps\\common\\Tom Clancy's Rainbow Six Siege"
 steam_dir2 = "\\Steam\\steamapps\\common\\Tom Clancy's Rainbow Six Siege"
 uplay_dir = "\\Program Files (x86)\\Ubisoft\\Ubisoft Game Launcher\\games\\Tom Clancy's Rainbow Six Siege"
+games_dir = "\\Games\\Tom Clancy's Rainbow Six Siege"
 if os.path.exists(f"C:{steam_dir}"):
     r6s_launcher = f"C:{steam_dir}\\RainbowSix.exe"
 elif os.path.exists(f"D:{steam_dir}"):
@@ -38,6 +39,10 @@ elif os.path.exists(f"C:{steam_dir2}"):
     r6s_launcher = f"C:{steam_dir2}\\RainbowSix.exe"
 elif os.path.exists(f"D:{steam_dir2}"):
     r6s_launcher = f"D:{steam_dir2}\\RainbowSix.exe"
+elif os.path.exists(f"C:{games_dir}"):
+    r6s_launcher = f"C:{games_dir}\\RainbowSix.exe"
+elif os.path.exists(f"D:{games_dir}"):
+    r6s_launcher = f"D:{games_dir}\\RainbowSix.exe"
 else:
     try:
         r6s_launcher = open(f"{fd}R6S_Path.txt").read().strip()
@@ -134,8 +139,9 @@ def renown_generator():
     # print("\nRenown Generator Started. - (To stop, press \"Esc\" while in-game. or CTRL+C)")
     print("\nRenown Generator Started. - (To stop, press \"Esc\" while in-game.")
     matches = 0
-    stop = False
-    while stop is False:
+    menu_bts = pyautogui.locateCenterOnScreen(f"{fd}menu_button.PNG", confidence=0.8)
+    safe = True
+    while menu_bts is None:
         match_end = False
         search_and_click("res.PNG", 300)
         search_and_click("rook.PNG")
@@ -149,8 +155,9 @@ def renown_generator():
                 print(f"Closing Program, {matches} Matches Played.")
                 search_and_click("quit.PNG")
                 search_and_click("confirm_quit.PNG")
-                stop = True
+                menu_bts = True
                 match_end = True
+                safe = False
             if failure_text is None:
                 continue
             else:
@@ -159,6 +166,12 @@ def renown_generator():
                 search_and_click("close.PNG")
                 search_and_click("bonus.PNG")
                 search_and_click("votefor.PNG")
+    if safe is True:
+        time.sleep(2)
+        starting_game()
+        renown_generator()
+    else:
+        pass
 
 
 def restoring_config():
