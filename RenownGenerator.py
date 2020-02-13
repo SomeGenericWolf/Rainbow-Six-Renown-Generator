@@ -97,7 +97,7 @@ def setting_config():
             config.write(configfile)
 
 
-def search_and_click(image_name, max_tries=200):
+def search_and_click(image_name, max_tries=200, time_sleep=0.0,):
     tries = 0
     while tries < max_tries:
         ig_element = pyautogui.locateCenterOnScreen(f"{fd}{image_name}", confidence=0.8)
@@ -105,6 +105,7 @@ def search_and_click(image_name, max_tries=200):
             tries += 1
             pass
         else:
+            time.sleep(time_sleep)
             pyautogui.mouseDown(ig_element, button='left')
             pyautogui.mouseUp(ig_element, button='left')
             return True
@@ -135,10 +136,10 @@ def starting_game():
     search_and_click("normal.PNG")
 
 
-def renown_generator():
-    # print("\nRenown Generator Started. - (To stop, press \"Esc\" while in-game. or CTRL+C)")
-    print("\nRenown Generator Started. - (To stop, press \"Esc\" while in-game.")
-    matches = 0
+def renown_generator(retry=0, num_matches=0):
+    if retry is 0:
+        print("\nRenown Generator Started. - (To stop, press \"Esc\" while in-game.)")
+    matches = num_matches
     menu_bts = pyautogui.locateCenterOnScreen(f"{fd}menu_button.PNG", confidence=0.8)
     safe = True
     while menu_bts is None:
@@ -149,6 +150,7 @@ def renown_generator():
         while match_end is False:
             failure_text = pyautogui.locateCenterOnScreen(f"{fd}failure.PNG", confidence=0.8)
             quit_to_desk = pyautogui.locateCenterOnScreen(f"{fd}quit.PNG", confidence=0.8)
+            menu_bts = pyautogui.locateCenterOnScreen(f"{fd}menu_button.PNG", confidence=0.8)
             if quit_to_desk is None:
                 pass
             else:
@@ -159,17 +161,26 @@ def renown_generator():
                 match_end = True
                 safe = False
             if failure_text is None:
-                continue
+                pass
             else:
                 matches += 1
                 match_end = True
-                search_and_click("close.PNG")
+                search_and_click("close.PNG", time_sleep=0.5)
                 search_and_click("bonus.PNG")
                 search_and_click("votefor.PNG")
+            if menu_bts is None:
+                pass
+            else:
+                match_end = True
+                menu_bts = True
+
     if safe is True:
         time.sleep(2)
-        starting_game()
-        renown_generator()
+        search_and_click("menu_button.PNG")
+        search_and_click("th_button.PNG")
+        search_and_click("lone_wolf.PNG")
+        search_and_click("normal.PNG")
+        renown_generator(1, num_matches=matches)
     else:
         pass
 
@@ -187,7 +198,7 @@ def restoring_config():
         time.sleep(4)
         exit()
     except IOError:
-        print(f"Backup not found, check the {dir_folder} folder.\nExiting program.")
+        print(f"\nBackup not found, check the {dir_folder} folder.\nExiting program.")
         time.sleep(4)
         exit()
 
