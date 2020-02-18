@@ -62,7 +62,7 @@ else:
         else:
             print("\"RainbowSix.exe\" not found inside the path you provided. Exiting")
             time.sleep(3.3)
-            exit()
+            exit(0)
 
 
 def setting_config():
@@ -196,11 +196,11 @@ def restoring_config():
         print("Configuration restored.")
         print("\nThank you for using this script!\nMade by Mia.")
         time.sleep(4)
-        exit()
+        exit(0)
     except IOError:
         print(f"\nBackup not found, check the {dir_folder} folder.\nExiting program.")
         time.sleep(4)
-        exit()
+        exit(0)
 
 
 try:
