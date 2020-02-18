@@ -13,6 +13,7 @@ time.sleep(1.5)
 user_profile = os.environ['USERPROFILE']
 ext_dir_folder = f"{user_profile}\\Documents\\My Games\\Rainbow Six - Siege"
 game_uuid = None
+r6s_launcher = None
 fd = "Files\\"
 for element in os.listdir(ext_dir_folder):
     try:
@@ -21,34 +22,31 @@ for element in os.listdir(ext_dir_folder):
     except ValueError:
         continue
 if game_uuid is None:
-    exit(f"Error. UUID not found.")
+    print(f"Error. UUID not found.")
+    time.sleep(2)
+    exit(0)
+
+
+def search_for_path(gpath):
+    global r6s_launcher
+    if os.path.exists(f"C:{gpath}"):
+        r6s_launcher = f"C:{gpath}\\RainbowSix.exe"
+    elif os.path.exists(f"D:{gpath}"):
+        r6s_launcher = f"D:{gpath}\\RainbowSix.exe"
+
+
 dir_folder = f"{user_profile}\\Documents\\My Games\\Rainbow Six - Siege\\{game_uuid}"
-steam_dir = "\\Program Files (x86)\\Steam\\steamapps\\common\\Tom Clancy's Rainbow Six Siege"
-steam_dir2 = "\\Steam\\steamapps\\common\\Tom Clancy's Rainbow Six Siege"
-uplay_dir = "\\Program Files (x86)\\Ubisoft\\Ubisoft Game Launcher\\games\\Tom Clancy's Rainbow Six Siege"
-games_dir = "\\Games\\Tom Clancy's Rainbow Six Siege"
-if os.path.exists(f"C:{steam_dir}"):
-    r6s_launcher = f"C:{steam_dir}\\RainbowSix.exe"
-elif os.path.exists(f"D:{steam_dir}"):
-    r6s_launcher = f"D:{steam_dir}\\RainbowSix.exe"
-elif os.path.exists(f"C:{uplay_dir}"):
-    r6s_launcher = f"C:{uplay_dir}\\RainbowSix.exe"
-elif os.path.exists(f"D:{uplay_dir}"):
-    r6s_launcher = f"D:{uplay_dir}\\RainbowSix.exe"
-elif os.path.exists(f"C:{steam_dir2}"):
-    r6s_launcher = f"C:{steam_dir2}\\RainbowSix.exe"
-elif os.path.exists(f"D:{steam_dir2}"):
-    r6s_launcher = f"D:{steam_dir2}\\RainbowSix.exe"
-elif os.path.exists(f"C:{games_dir}"):
-    r6s_launcher = f"C:{games_dir}\\RainbowSix.exe"
-elif os.path.exists(f"D:{games_dir}"):
-    r6s_launcher = f"D:{games_dir}\\RainbowSix.exe"
-else:
+search_for_path("\\Program Files (x86)\\Steam\\steamapps\\common\\Tom Clancy's Rainbow Six Siege")
+search_for_path("\\Steam\\steamapps\\common\\Tom Clancy's Rainbow Six Siege")
+search_for_path("\\Program Files (x86)\\Ubisoft\\Ubisoft Game Launcher\\games\\Tom Clancy's Rainbow Six Siege")
+search_for_path("\\Games\\Tom Clancy's Rainbow Six Siege")
+if r6s_launcher is None:
     try:
         r6s_launcher = open(f"{fd}R6S_Path.txt").read().strip()
     except IOError:
-        print(f"Enter the path of the folder where \"Rainbow Six\" is installed.")
-        r6s_launcher = input(f"\nExample: C:{steam_dir}\nEnter the path: ")
+        print(f"Enter the path of the folder where \"Rainbow Six\" is installed.\n")
+        print("Example: \"C:\\Program Files (x86)\\Steam\\steamapps\\common\\Tom Clancy's Rainbow Six Siege\"")
+        r6s_launcher = input("\nEnter the path: ")
         r6s_launcher = r6s_launcher.replace('\"', '')
         print(f"\nLooking for \"RainbowSix.exe\" in: \"{r6s_launcher}\"")
         if os.path.isfile(f"{r6s_launcher}\\RainbowSix.exe"):
@@ -97,39 +95,40 @@ def setting_config():
             config.write(configfile)
 
 
-def search_and_click(image_name, max_tries=200, time_sleep=0.0,):
+def search_and_click(image_name, max_tries=200, time_sleep=0.0, timeout_restart=False):
     tries = 0
     while tries < max_tries:
         ig_element = pyautogui.locateCenterOnScreen(f"{fd}{image_name}", confidence=0.8)
-        if ig_element is None:
-            tries += 1
-            pass
-        else:
+        if ig_element is not None:
             time.sleep(time_sleep)
             pyautogui.mouseDown(ig_element, button='left')
             pyautogui.mouseUp(ig_element, button='left')
             return True
+        else:
+            tries += 1
+    if timeout_restart is True and tries > max_tries:
+        try_menu = search_and_click("menu_button.PNG", max_tries=20)
+        if try_menu is not None:
+            search_and_click("th_button.PNG")
+            search_and_click("lone_wolf.PNG")
+            search_and_click("normal.PNG")
+            renown_generator()
+        elif try_menu is None:
+            starting_game()
+            renown_generator()
 
 
 def starting_game():
     print("\nStarting RainbowSix.exe, please wait.")
     subprocess.Popen(r6s_launcher)
-    st_presence = False
-    main_menu_presence = False
-    search_and_click("warning.PNG", 1000)
-    while st_presence is False:
-        if pyautogui.locateCenterOnScreen(f"{fd}servers_text.PNG", confidence=0.8) is None:
-            pyautogui.press("u", presses=5, interval=0.01)
-            time.sleep(0.3)
-        else:
-            st_presence = True
-    while main_menu_presence is False:
-        if pyautogui.locateCenterOnScreen(f"{fd}menu_button.PNG", confidence=0.8) is None:
-            pass
-        else:
-            time.sleep(1)
-            main_menu_presence = True
+    search_and_click("warning.PNG", 1000, timeout_restart=True)
+    while pyautogui.locateCenterOnScreen(f"{fd}servers_text.PNG", confidence=0.8) is None:
+        pyautogui.press("u", presses=5, interval=0.01)
+        time.sleep(0.3)
+    while pyautogui.locateCenterOnScreen(f"{fd}menu_button.PNG", confidence=0.8) is None:
+        pass
     print("Starting a Terrorist Hunt match.")
+    time.sleep(1)
     search_and_click("menu_button.PNG")
     search_and_click("th_button.PNG")
     search_and_click("lone_wolf.PNG")
@@ -144,45 +143,36 @@ def renown_generator(retry=0, num_matches=0):
     safe = True
     while menu_bts is None:
         match_end = False
-        search_and_click("res.PNG", 300)
+        search_and_click("res.PNG", 250, timeout_restart=True)
         search_and_click("rook.PNG")
         search_and_click("confirm.PNG")
         while match_end is False:
             failure_text = pyautogui.locateCenterOnScreen(f"{fd}failure.PNG", confidence=0.8)
             quit_to_desk = pyautogui.locateCenterOnScreen(f"{fd}quit.PNG", confidence=0.8)
             menu_bts = pyautogui.locateCenterOnScreen(f"{fd}menu_button.PNG", confidence=0.8)
-            if quit_to_desk is None:
-                pass
-            else:
+            if quit_to_desk is not None:
                 print(f"Closing Program, {matches} Matches Played.")
                 search_and_click("quit.PNG")
                 search_and_click("confirm_quit.PNG")
                 menu_bts = True
                 match_end = True
                 safe = False
-            if failure_text is None:
-                pass
-            else:
+            if failure_text is not None:
                 matches += 1
                 match_end = True
-                search_and_click("close.PNG", time_sleep=0.5)
+                search_and_click("close.PNG", time_sleep=0.5, timeout_restart=True)
                 search_and_click("bonus.PNG")
-                search_and_click("votefor.PNG")
-            if menu_bts is None:
-                pass
-            else:
+                search_and_click("votefor.PNG", timeout_restart=True)
+            if menu_bts is not None:
                 match_end = True
                 menu_bts = True
-
     if safe is True:
         time.sleep(2)
-        search_and_click("menu_button.PNG")
+        search_and_click("menu_button.PNG", timeout_restart=True)
         search_and_click("th_button.PNG")
         search_and_click("lone_wolf.PNG")
         search_and_click("normal.PNG")
         renown_generator(1, num_matches=matches)
-    else:
-        pass
 
 
 def restoring_config():
