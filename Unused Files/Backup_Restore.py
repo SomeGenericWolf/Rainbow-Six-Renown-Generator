@@ -13,18 +13,18 @@ for element in os.listdir(ext_dir_folder):
         game_uuid = UUID(element)
     except ValueError:
         continue
-if game_uuid is None:
+if not game_uuid:
     exit(f"Error. UUID not found.")
 dir_folder = f"{user_profile}\\Documents\\My Games\\Rainbow Six - Siege\\{game_uuid}"
-confirmationk = False
+confirmation = False
 
-while confirmationk is False:
+while not confirmation:
     print("The RenownGenerator.exe already restores your backup if you let if finish in the correct way")
     print("Only Run this script if you closed it abruptly\n")
     answer = input("Are you sure you want to run this script? (Type \"Y\" to continue, \"N\" to close): ")
     answer = answer.lower()
     if answer == "y":
-        confirmationk = True
+        confirmation = True
         time.sleep(1)
         os.system("cls")
         print("The RenownGenerator.exe already restores your backup if you let if finish in the correct way")
