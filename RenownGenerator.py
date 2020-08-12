@@ -1,4 +1,4 @@
-# Made by Mia, uwu
+# Made by SomeGenericWolf uwu
 import os
 import sys
 import time
@@ -21,7 +21,7 @@ for element in os.listdir(ext_dir_folder):
         game_uuid = UUID(element)
     except ValueError:
         continue
-if game_uuid is None:
+if not game_uuid:
     print(f"Error. UUID not found.")
     time.sleep(2)
     exit(0)
@@ -106,14 +106,14 @@ def search_and_click(image_name, max_tries=200, time_sleep=0.0, timeout_restart=
             return True
         else:
             tries += 1
-    if timeout_restart is True and tries > max_tries:
+    if timeout_restart and tries > max_tries:
         try_menu = search_and_click("menu_button.PNG", max_tries=20)
-        if try_menu is not None:
+        if try_menu:
             search_and_click("th_button.PNG")
             search_and_click("lone_wolf.PNG")
             search_and_click("normal.PNG")
             renown_generator()
-        elif try_menu is None:
+        else:
             starting_game()
             renown_generator()
 
@@ -122,10 +122,10 @@ def starting_game():
     print("\nStarting RainbowSix.exe, please wait.")
     subprocess.Popen(r6s_launcher)
     search_and_click("warning.PNG", 1000, timeout_restart=True)
-    while pyautogui.locateCenterOnScreen(f"{fd}servers_text.PNG", confidence=0.8) is None:
+    while not pyautogui.locateCenterOnScreen(f"{fd}servers_text.PNG", confidence=0.8):
         pyautogui.press("u", presses=5, interval=0.01)
         time.sleep(0.3)
-    while pyautogui.locateCenterOnScreen(f"{fd}menu_button.PNG", confidence=0.8) is None:
+    while not pyautogui.locateCenterOnScreen(f"{fd}menu_button.PNG", confidence=0.8):
         pass
     print("Starting a Terrorist Hunt match.")
     time.sleep(1)
@@ -141,32 +141,32 @@ def renown_generator(retry=0, num_matches=0):
     matches = num_matches
     menu_bts = pyautogui.locateCenterOnScreen(f"{fd}menu_button.PNG", confidence=0.8)
     safe = True
-    while menu_bts is None:
+    while not menu_bt:
         match_end = False
         search_and_click("res.PNG", 250, timeout_restart=True)
         search_and_click("rook.PNG")
         search_and_click("confirm.PNG")
-        while match_end is False:
+        while not match_end:
             failure_text = pyautogui.locateCenterOnScreen(f"{fd}failure.PNG", confidence=0.8)
             quit_to_desk = pyautogui.locateCenterOnScreen(f"{fd}quit.PNG", confidence=0.8)
             menu_bts = pyautogui.locateCenterOnScreen(f"{fd}menu_button.PNG", confidence=0.8)
-            if quit_to_desk is not None:
+            if quit_to_desk:
                 print(f"Closing Program, {matches} Matches Played.")
                 search_and_click("quit.PNG")
                 search_and_click("confirm_quit.PNG")
                 menu_bts = True
                 match_end = True
                 safe = False
-            if failure_text is not None:
+            if failure_text:
                 matches += 1
                 match_end = True
                 search_and_click("close.PNG", time_sleep=0.5, timeout_restart=True)
                 search_and_click("bonus.PNG")
                 search_and_click("votefor.PNG", timeout_restart=True)
-            if menu_bts is not None:
+            if menu_bts:
                 match_end = True
                 menu_bts = True
-    if safe is True:
+    if safe:
         time.sleep(2)
         search_and_click("menu_button.PNG", timeout_restart=True)
         search_and_click("th_button.PNG")
@@ -184,7 +184,7 @@ def restoring_config():
         time.sleep(2)
         shutil.move(dir_folder + r"\GameSettings.bk", dir_folder + r"\GameSettings.ini")
         print("Configuration restored.")
-        print("\nThank you for using this script!\nMade by Mia.")
+        print("\nThank you for using this script!\nMade by SomeGenericWolf.")
         time.sleep(4)
         exit(0)
     except IOError:
